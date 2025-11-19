@@ -128,158 +128,6 @@
         "env": []
     },
     {
-        "id": "6fa9f275ec13c6a3",
-        "type": "subflow",
-        "name": "Botón alarma - Caja reductora",
-        "info": "",
-        "category": "",
-        "in": [
-            {
-                "x": 140,
-                "y": 160,
-                "wires": [
-                    {
-                        "id": "d89e447a6498f938"
-                    }
-                ]
-            }
-        ],
-        "out": [],
-        "env": [
-            {
-                "name": "numeroAlarma",
-                "type": "num",
-                "value": ""
-            }
-        ],
-        "meta": {},
-        "color": "#D8BFD8"
-    },
-    {
-        "id": "3d86c7a5a86f5b83",
-        "type": "subflow",
-        "name": "Botón alarma - Sistema electrónico",
-        "info": "",
-        "category": "",
-        "in": [
-            {
-                "x": 140,
-                "y": 160,
-                "wires": [
-                    {
-                        "id": "5485ed97bf10bdda"
-                    }
-                ]
-            }
-        ],
-        "out": [],
-        "env": [
-            {
-                "name": "numeroAlarma",
-                "type": "num",
-                "value": ""
-            }
-        ],
-        "meta": {},
-        "color": "#E9967A"
-    },
-    {
-        "id": "4873a0a00a95bba6",
-        "type": "subflow",
-        "name": "Botón alarma - Incendio",
-        "info": "",
-        "category": "",
-        "in": [
-            {
-                "x": 140,
-                "y": 160,
-                "wires": [
-                    {
-                        "id": "3653bd0f801537fb"
-                    }
-                ]
-            }
-        ],
-        "out": [],
-        "env": [
-            {
-                "name": "numeroAlarma",
-                "type": "num",
-                "value": ""
-            }
-        ],
-        "meta": {},
-        "color": "#FFCC66"
-    },
-    {
-        "id": "12ad6fa0c258a0ae",
-        "type": "subflow",
-        "name": "Botón alarma - Toma fuerza frontal",
-        "info": "",
-        "category": "",
-        "in": [
-            {
-                "x": 60,
-                "y": 160,
-                "wires": [
-                    {
-                        "id": "9a37237b6b61af7d"
-                    }
-                ]
-            }
-        ],
-        "out": [],
-        "env": [
-            {
-                "name": "numeroAlarma",
-                "type": "num",
-                "value": ""
-            }
-        ],
-        "meta": {},
-        "color": "#FDF0C2"
-    },
-    {
-        "id": "5b2773813834fea0",
-        "type": "subflow",
-        "name": "Agregar alarma a listado",
-        "info": "",
-        "category": "",
-        "in": [
-            {
-                "x": 220,
-                "y": 80,
-                "wires": [
-                    {
-                        "id": "1a567f25a5fd88ed"
-                    }
-                ]
-            }
-        ],
-        "out": [
-            {
-                "x": 620,
-                "y": 80,
-                "wires": [
-                    {
-                        "id": "1a567f25a5fd88ed",
-                        "port": 0
-                    }
-                ]
-            }
-        ],
-        "env": [
-            {
-                "name": "numeroAlarma",
-                "type": "str",
-                "value": ""
-            }
-        ],
-        "meta": {},
-        "color": "#87A980",
-        "icon": "node-red/debug.svg"
-    },
-    {
         "id": "6ee86910667a3881",
         "type": "group",
         "z": "5ca5ab6bbe6b937a",
@@ -2867,439 +2715,6 @@
         "env": []
     },
     {
-        "id": "d89e447a6498f938",
-        "type": "function",
-        "z": "6fa9f275ec13c6a3",
-        "name": "function alarma 1",
-        "func": "var estado_alarma = global.get(\"global_alarma\" + env.get(\"numeroAlarma\"));\nvar estado_inhibicionAlarma = global.get(\"alarmaInhibida\"  + env.get(\"numeroAlarma\"));\nlet titulo = global.get(\"nombreAlarma\" + env.get(\"numeroAlarma\"));\nlet payload = {};\n\n\n\nif (estado_inhibicionAlarma == \"noInhibida\") {\n    if (estado_alarma == \"activa_noReconocida\" || estado_alarma == \"inactiva_noReconocida\")  \n        payload = {\n        text: titulo,\n        color: global.get(\"global_color_alarma\"),\n        blink: true\n        };\n    else if (estado_alarma == \"activa_reconocida\")\n        payload = {\n        text: titulo,\n            color: global.get(\"global_color_alarma\"),\n        blink: false\n        };  \n    else if (estado_alarma == \"inactiva_reconocida\") //normalizada\n        payload = {\n        text: titulo,\n        color: global.get(\"global_color_normal\"),\n        blink: false        \n        };      \n   \n}\nelse if (estado_inhibicionAlarma == \"inhibida\")\n    payload = {\n        text: titulo,\n        color: global.get(\"global_color_inhibida\"),\n        blink: false\n    };\n\nmsg.payload = payload;\nreturn msg;",
-        "outputs": 1,
-        "timeout": "",
-        "noerr": 0,
-        "initialize": "",
-        "finalize": "",
-        "libs": [],
-        "x": 330,
-        "y": 160,
-        "wires": [
-            []
-        ]
-    },
-    {
-        "id": "5a61d5b670d52bc5",
-        "type": "function",
-        "z": "6fa9f275ec13c6a3",
-        "name": "function 5",
-        "func": "var mensajeEntrada = msg.payload;\nlet idAlarma = env.get(\"numeroAlarma\");\nlet direccion_PLC = global.get(\"dirReconocerAlarma\" + idAlarma);\nmsg.payload = {\n    value : true,\n    \"fc\": 5,\n    \"address\": direccion_PLC,\n    \"quantity\": 1\n}\nif (mensajeEntrada === \"ack\") {\n    return msg;\n} else {\n    return null; // No envía nada\n}\n\n",
-        "outputs": 1,
-        "timeout": 0,
-        "noerr": 0,
-        "initialize": "",
-        "finalize": "",
-        "libs": [],
-        "x": 700,
-        "y": 160,
-        "wires": [
-            [
-                "695114f955e18db6",
-                "d89e447a6498f938"
-            ]
-        ]
-    },
-    {
-        "id": "768e8d4c29892641",
-        "type": "delay",
-        "z": "6fa9f275ec13c6a3",
-        "name": "",
-        "pauseType": "delay",
-        "timeout": "2",
-        "timeoutUnits": "seconds",
-        "rate": "1",
-        "nbRateUnits": "1",
-        "rateUnits": "second",
-        "randomFirst": "1",
-        "randomLast": "5",
-        "randomUnits": "seconds",
-        "drop": false,
-        "allowrate": false,
-        "outputs": 1,
-        "x": 940,
-        "y": 120,
-        "wires": [
-            [
-                "695114f955e18db6"
-            ]
-        ]
-    },
-    {
-        "id": "a2fcd792ee6c21a5",
-        "type": "function",
-        "z": "6fa9f275ec13c6a3",
-        "name": "function 7",
-        "func": "var mensajeEntrada = msg.payload;\nlet idAlarma = env.get(\"numeroAlarma\");\nlet direccion_PLC = global.get(\"dirReconocerAlarma\" + idAlarma);\nmsg.payload = {\n    value : false,\n    \"fc\": 5,\n    \"address\": direccion_PLC,\n    \"quantity\": 1\n}\nif (mensajeEntrada === \"ack\") {\n    return msg;\n} else {\n    return null; // No envía nada\n}",
-        "outputs": 1,
-        "timeout": 0,
-        "noerr": 0,
-        "initialize": "",
-        "finalize": "",
-        "libs": [],
-        "x": 700,
-        "y": 120,
-        "wires": [
-            [
-                "768e8d4c29892641"
-            ]
-        ]
-    },
-    {
-        "id": "695114f955e18db6",
-        "type": "modbus-flex-write",
-        "z": "6fa9f275ec13c6a3",
-        "name": "",
-        "showStatusActivities": false,
-        "showErrors": false,
-        "showWarnings": true,
-        "server": "88dbad058767608a",
-        "emptyMsgOnFail": false,
-        "keepMsgProperties": false,
-        "delayOnStart": false,
-        "startDelayTime": "",
-        "x": 1190,
-        "y": 160,
-        "wires": [
-            [],
-            []
-        ]
-    },
-    {
-        "id": "5485ed97bf10bdda",
-        "type": "function",
-        "z": "3d86c7a5a86f5b83",
-        "name": "function alarma 1",
-        "func": "var estado_alarma = global.get(\"global_alarma\" + env.get(\"numeroAlarma\"));\nvar estado_inhibicionAlarma = global.get(\"alarmaInhibida\"  + env.get(\"numeroAlarma\"));\nlet titulo = global.get(\"nombreAlarma\" + env.get(\"numeroAlarma\"));\nlet payload = {};\n\n\n\nif (estado_inhibicionAlarma == \"noInhibida\") {\n    if (estado_alarma == \"activa_noReconocida\" || estado_alarma == \"inactiva_noReconocida\") \n        payload = {\n        text: titulo,\n        color: global.get(\"global_color_alarma\"),\n        blink: true\n        };\n    else if (estado_alarma == \"activa_reconocida\")\n        payload = {\n        text: titulo,\n        color: global.get(\"global_color_alarma\"),\n        blink: false\n        };  \n    else if (estado_alarma == \"inactiva_reconocida\") //normalizada\n        payload = {\n        text: titulo,\n        color: global.get(\"global_color_normal\"),\n        blink: false        \n        };      \n   \n}\nelse if (estado_inhibicionAlarma == \"inhibida\")\n    payload = {\n        text: titulo,\n        color: global.get(\"global_color_inhibida\"),\n        blink: false\n    };\n\nmsg.payload = payload;\nreturn msg;",
-        "outputs": 1,
-        "timeout": "",
-        "noerr": 0,
-        "initialize": "",
-        "finalize": "",
-        "libs": [],
-        "x": 330,
-        "y": 160,
-        "wires": [
-            []
-        ]
-    },
-    {
-        "id": "59db421698f8dc36",
-        "type": "function",
-        "z": "3d86c7a5a86f5b83",
-        "name": "function 5",
-        "func": "var mensajeEntrada = msg.payload;\nlet idAlarma = env.get(\"numeroAlarma\");\nlet direccion_PLC = global.get(\"dirReconocerAlarma\" + idAlarma);\nmsg.payload = {\n    value : true,\n    \"fc\": 5,\n    \"address\": direccion_PLC,\n    \"quantity\": 1\n}\nif (mensajeEntrada === \"ack\") {\n    return msg;\n} else {\n    return null; // No envía nada\n}\n\n",
-        "outputs": 1,
-        "timeout": 0,
-        "noerr": 0,
-        "initialize": "",
-        "finalize": "",
-        "libs": [],
-        "x": 700,
-        "y": 160,
-        "wires": [
-            [
-                "3ad6d45aa16c24fd",
-                "5485ed97bf10bdda"
-            ]
-        ]
-    },
-    {
-        "id": "46ac2c0e29399847",
-        "type": "delay",
-        "z": "3d86c7a5a86f5b83",
-        "name": "",
-        "pauseType": "delay",
-        "timeout": "2",
-        "timeoutUnits": "seconds",
-        "rate": "1",
-        "nbRateUnits": "1",
-        "rateUnits": "second",
-        "randomFirst": "1",
-        "randomLast": "5",
-        "randomUnits": "seconds",
-        "drop": false,
-        "allowrate": false,
-        "outputs": 1,
-        "x": 940,
-        "y": 120,
-        "wires": [
-            [
-                "3ad6d45aa16c24fd"
-            ]
-        ]
-    },
-    {
-        "id": "590008c89c4f108e",
-        "type": "function",
-        "z": "3d86c7a5a86f5b83",
-        "name": "function 7",
-        "func": "var mensajeEntrada = msg.payload;\nlet idAlarma = env.get(\"numeroAlarma\");\nlet direccion_PLC = global.get(\"dirReconocerAlarma\" + idAlarma);\nmsg.payload = {\n    value : false,\n    \"fc\": 5,\n    \"address\": direccion_PLC,\n    \"quantity\": 1\n}\nif (mensajeEntrada === \"ack\") {\n    return msg;\n} else {\n    return null; // No envía nada\n}",
-        "outputs": 1,
-        "timeout": 0,
-        "noerr": 0,
-        "initialize": "",
-        "finalize": "",
-        "libs": [],
-        "x": 700,
-        "y": 120,
-        "wires": [
-            [
-                "46ac2c0e29399847"
-            ]
-        ]
-    },
-    {
-        "id": "3ad6d45aa16c24fd",
-        "type": "modbus-flex-write",
-        "z": "3d86c7a5a86f5b83",
-        "name": "",
-        "showStatusActivities": false,
-        "showErrors": false,
-        "showWarnings": true,
-        "server": "88dbad058767608a",
-        "emptyMsgOnFail": false,
-        "keepMsgProperties": false,
-        "delayOnStart": false,
-        "startDelayTime": "",
-        "x": 1190,
-        "y": 160,
-        "wires": [
-            [],
-            []
-        ]
-    },
-    {
-        "id": "3653bd0f801537fb",
-        "type": "function",
-        "z": "4873a0a00a95bba6",
-        "name": "function alarma 1",
-        "func": "var estado_alarma = global.get(\"global_alarma\" + env.get(\"numeroAlarma\"));\nvar estado_inhibicionAlarma = global.get(\"alarmaInhibida\"  + env.get(\"numeroAlarma\"));\nlet titulo = global.get(\"nombreAlarma\" + env.get(\"numeroAlarma\"));\nlet payload = {};\n\nif (estado_inhibicionAlarma == \"noInhibida\") {\n    if (estado_alarma == \"activa_noReconocida\" || estado_alarma == \"inactiva_noReconocida\") \n        payload = {\n        text: titulo,\n        color: global.get(\"global_color_alarma\"),\n        blink: true\n        };\n    else if (estado_alarma == \"activa_reconocida\")\n        payload = {\n        text: titulo,\n        color: global.get(\"global_color_alarma\"),\n        blink: false\n        };  \n    else if (estado_alarma == \"inactiva_reconocida\") //normalizada\n        payload = {\n        text: titulo,\n        color: global.get(\"global_color_normal\"),\n        blink: false        \n        };      \n   \n}\nelse if (estado_inhibicionAlarma == \"inhibida\")\n    payload = {\n        text: titulo,\n        color: global.get(\"global_color_inhibida\"),\n        blink: false\n    };\n\nmsg.payload = payload;\nreturn msg;",
-        "outputs": 1,
-        "timeout": "",
-        "noerr": 0,
-        "initialize": "",
-        "finalize": "",
-        "libs": [],
-        "x": 330,
-        "y": 160,
-        "wires": [
-            []
-        ]
-    },
-    {
-        "id": "054e2215b0096795",
-        "type": "function",
-        "z": "4873a0a00a95bba6",
-        "name": "function 5",
-        "func": "var mensajeEntrada = msg.payload;\nlet idAlarma = env.get(\"numeroAlarma\");\nlet direccion_PLC = global.get(\"dirReconocerAlarma\" + idAlarma);\nmsg.payload = {\n    value : true,\n    \"fc\": 5,\n    \"address\": direccion_PLC,\n    \"quantity\": 1\n}\nif (mensajeEntrada === \"ack\") {\n    return msg;\n} else {\n    return null; // No envía nada\n}\n\n",
-        "outputs": 1,
-        "timeout": 0,
-        "noerr": 0,
-        "initialize": "",
-        "finalize": "",
-        "libs": [],
-        "x": 700,
-        "y": 160,
-        "wires": [
-            [
-                "be635eace1e2632d",
-                "3653bd0f801537fb"
-            ]
-        ]
-    },
-    {
-        "id": "3c4b3d1dcb61b29b",
-        "type": "delay",
-        "z": "4873a0a00a95bba6",
-        "name": "",
-        "pauseType": "delay",
-        "timeout": "2",
-        "timeoutUnits": "seconds",
-        "rate": "1",
-        "nbRateUnits": "1",
-        "rateUnits": "second",
-        "randomFirst": "1",
-        "randomLast": "5",
-        "randomUnits": "seconds",
-        "drop": false,
-        "allowrate": false,
-        "outputs": 1,
-        "x": 940,
-        "y": 120,
-        "wires": [
-            [
-                "be635eace1e2632d"
-            ]
-        ]
-    },
-    {
-        "id": "3dd4671f1d57fc99",
-        "type": "function",
-        "z": "4873a0a00a95bba6",
-        "name": "function 7",
-        "func": "var mensajeEntrada = msg.payload;\nlet idAlarma = env.get(\"numeroAlarma\");\nlet direccion_PLC = global.get(\"dirReconocerAlarma\" + idAlarma);\nmsg.payload = {\n    value : false,\n    \"fc\": 5,\n    \"address\": direccion_PLC,\n    \"quantity\": 1\n}\nif (mensajeEntrada === \"ack\") {\n    return msg;\n} else {\n    return null; // No envía nada\n}",
-        "outputs": 1,
-        "timeout": 0,
-        "noerr": 0,
-        "initialize": "",
-        "finalize": "",
-        "libs": [],
-        "x": 700,
-        "y": 120,
-        "wires": [
-            [
-                "3c4b3d1dcb61b29b"
-            ]
-        ]
-    },
-    {
-        "id": "be635eace1e2632d",
-        "type": "modbus-flex-write",
-        "z": "4873a0a00a95bba6",
-        "name": "",
-        "showStatusActivities": false,
-        "showErrors": false,
-        "showWarnings": true,
-        "server": "88dbad058767608a",
-        "emptyMsgOnFail": false,
-        "keepMsgProperties": false,
-        "delayOnStart": false,
-        "startDelayTime": "",
-        "x": 1190,
-        "y": 160,
-        "wires": [
-            [],
-            []
-        ]
-    },
-    {
-        "id": "9a37237b6b61af7d",
-        "type": "function",
-        "z": "12ad6fa0c258a0ae",
-        "name": "function alarma 1",
-        "func": "/*\nvar estado_alarma = global.get(\"global_alarma\" + env.get(\"numeroAlarma\"));\nvar estado_inhibicionAlarma = global.get(\"alarmaInhibida\"  + env.get(\"numeroAlarma\"));\nlet titulo = global.get(\"nombreAlarma\" + env.get(\"numeroAlarma\"));\nlet payload = {};\n\nlet botones = [];\n\n\n\n\nif (estado_inhibicionAlarma == \"noInhibida\") {\n    if (estado_alarma == \"activa_noReconocida\" || estado_alarma == \"inactiva_noReconocida\") \n        payload = {\n        text: titulo,\n        color: global.get(\"global_color_alarma\"),\n        blink: true\n        };\n    else if (estado_alarma == \"activa_reconocida\")\n        payload = {\n        text: titulo,\n            color: global.get(\"global_color_alarma\"),\n        blink: false\n        };  \n    else if (estado_alarma == \"inactiva_reconocida\") //normalizada\n        payload = {\n        text: titulo,\n        color: global.get(\"global_color_normal\"),\n        blink: false        \n        };      \n   \n}\nelse if (estado_inhibicionAlarma == \"inhibida\")\n    payload = {\n        text: titulo,\n        color: global.get(\"global_color_inhibida\"),\n        blink: false\n    };\nbotones.push(payload);\n\n\n\nmsg.payload = botones;\nreturn msg;\n*/\n/*\nif(global.get(\"global_actualizarBotones\") == \"noActualizar\" && global.get(\"global_actualizarInhibidos\") == \"noActualizar\"){\n    return null;\n}*/\n\nlet botones = [];\n\nfor (let i = 56; i < 86; i++) {\n    let estado_alarma = global.get(\"global_alarma\" + i);\n    let estado_inhibicionAlarma = global.get(\"alarmaInhibida\" + i);\n    let titulo = global.get(\"nombreAlarma\" + i);\n\n    let boton = {};\n\n    if (estado_inhibicionAlarma == \"noInhibida\") {\n        if (estado_alarma == \"activa_noReconocida\" || estado_alarma == \"inactiva_noReconocida\") {\n            boton = {\n                text: titulo,\n                color: global.get(\"global_color_alarma\"),\n                blink: true,\n                indice : i\n            };\n        } else if (estado_alarma == \"activa_reconocida\") {\n            boton = {\n                text: titulo,\n                color: global.get(\"global_color_alarma\"),\n                blink: false,\n                indice : i\n            };\n        } else if (estado_alarma == \"inactiva_reconocida\") {\n            boton = {\n                text: titulo,\n                color: global.get(\"global_color_normal\"),\n                blink: false,\n                indice : i\n            };\n        }\n    } else if (estado_inhibicionAlarma == \"inhibida\") {\n        boton = {\n            text: titulo,\n            color: global.get(\"global_color_inhibida\"),\n            blink: false,\n            indice : i\n        };\n    }\n\n    botones.push(boton);\n}\n\nmsg.payload = botones;\nreturn msg;\n",
-        "outputs": 1,
-        "timeout": "",
-        "noerr": 0,
-        "initialize": "",
-        "finalize": "",
-        "libs": [],
-        "x": 250,
-        "y": 160,
-        "wires": [
-            []
-        ]
-    },
-    {
-        "id": "d48a4380278223fe",
-        "type": "function",
-        "z": "12ad6fa0c258a0ae",
-        "name": "function 5",
-        "func": "var mensajeEntrada = msg.payload;\nlet idAlarma = msg.index; //env.get(\"numeroAlarma\");\nlet direccion_PLC = global.get(\"dirReconocerAlarma\" + idAlarma);\nmsg.payload = {\n    value : true,\n    \"fc\": 5,\n    \"address\": direccion_PLC,\n    \"quantity\": 1\n}\nif (mensajeEntrada === \"ack\") {\n    return msg;\n} else {\n    return null; // No envía nada\n}\n\n",
-        "outputs": 1,
-        "timeout": 0,
-        "noerr": 0,
-        "initialize": "",
-        "finalize": "",
-        "libs": [],
-        "x": 620,
-        "y": 160,
-        "wires": [
-            [
-                "dff93d66c699167a"
-            ]
-        ]
-    },
-    {
-        "id": "891084e2c219a5b1",
-        "type": "delay",
-        "z": "12ad6fa0c258a0ae",
-        "name": "",
-        "pauseType": "delay",
-        "timeout": "2",
-        "timeoutUnits": "seconds",
-        "rate": "1",
-        "nbRateUnits": "1",
-        "rateUnits": "second",
-        "randomFirst": "1",
-        "randomLast": "5",
-        "randomUnits": "seconds",
-        "drop": false,
-        "allowrate": false,
-        "outputs": 1,
-        "x": 780,
-        "y": 120,
-        "wires": [
-            [
-                "dff93d66c699167a"
-            ]
-        ]
-    },
-    {
-        "id": "f764a38327a124d5",
-        "type": "function",
-        "z": "12ad6fa0c258a0ae",
-        "name": "function 7",
-        "func": "var mensajeEntrada = msg.payload;\nlet idAlarma = msg.index; //env.get(\"numeroAlarma\");\nlet direccion_PLC = global.get(\"dirReconocerAlarma\" + idAlarma);\nmsg.payload = {\n    value : false,\n    \"fc\": 5,\n    \"address\": direccion_PLC,\n    \"quantity\": 1\n}\nif (mensajeEntrada === \"ack\") {\n    return msg;\n} else {\n    return null; // No envía nada\n}",
-        "outputs": 1,
-        "timeout": 0,
-        "noerr": 0,
-        "initialize": "",
-        "finalize": "",
-        "libs": [],
-        "x": 620,
-        "y": 120,
-        "wires": [
-            [
-                "891084e2c219a5b1"
-            ]
-        ]
-    },
-    {
-        "id": "dff93d66c699167a",
-        "type": "modbus-flex-write",
-        "z": "12ad6fa0c258a0ae",
-        "name": "",
-        "showStatusActivities": false,
-        "showErrors": false,
-        "showWarnings": true,
-        "server": "88dbad058767608a",
-        "emptyMsgOnFail": false,
-        "keepMsgProperties": false,
-        "delayOnStart": false,
-        "startDelayTime": "",
-        "x": 990,
-        "y": 160,
-        "wires": [
-            [],
-            []
-        ]
-    },
-    {
-        "id": "1a567f25a5fd88ed",
-        "type": "function",
-        "z": "5b2773813834fea0",
-        "name": "function 1",
-        "func": "var numeroAlarma = env.get(\"numeroAlarma\");\nvar nombreAlarma = global.get(\"nombreAlarma\" + numeroAlarma);\nvar estadoAnteriorAlarma = global.get(\"global_alarma_ea\" + numeroAlarma) || \"no\";\nvar estadoAlarma = global.get(\"global_alarma\" + numeroAlarma);\nvar estado_inhibicionAlarma = global.get(\"alarmaInhibida\"  + numeroAlarma);\n\n\nlet soloReemplazarDatos = false; //cuando no es necesario recontruir y evitamos que la tablase vaya a la posición inicial visualmente\nlet tabla = global.get(\"tabla_listadoAlarmasActivas\") || [];    \nif (estadoAlarma != estadoAnteriorAlarma){\n    // Buscar si ya existe una alarma con ese ID\n    let index = tabla.findIndex(item => item.id === numeroAlarma);\n    //let ahora = new Date();\n    //let fechaLegible = ahora.toLocaleString();  // formato local: dd/mm/yyyy hh:mm:ss\n\n    if (estadoAlarma == \"activa_noReconocida\" || estadoAlarma == \"inactiva_noReconocida\"){ \n        let color = global.get(\"global_color_alarma\"); \n        if (estadoAlarma == \"inactiva_noReconocida\")\n            color = global.get(\"global_color_inactivaNoReconocida\");\n        let blink = true;\n        let alarmaHtml = `<div class=\"alarm-cell ${color} ${blink ? 'blinking' : ''}\">${nombreAlarma}</div>`;\n \n        let elemento = {\n            \"id\": numeroAlarma,\n            \"alarma\": alarmaHtml,            \n            //\"fecha\": fechaLegible\n        }\n        if (index !== -1) {\n            // Ya existe → reemplazar\n            tabla[index] = elemento;\n            soloReemplazarDatos = true;     \n        }\n        else \n            tabla.unshift(elemento);            \n    }\n    else if (estadoAlarma == \"activa_reconocida\"){\n        let color = global.get(\"global_color_alarma\");\n        let blink = false;        \n        let alarmaHtml = `<div class=\"alarm-cell ${color} ${blink ? 'blinking' : ''}\">${nombreAlarma}</div>`;\n        let elemento = {\n            \"id\": numeroAlarma,\n            \"alarma\": alarmaHtml,            \n            //\"fecha\": fechaLegible\n        }\n        if (index !== -1){\n            // Ya existe → reemplazar\n            tabla[index] = elemento; \n            soloReemplazarDatos = true;\n            }\n        else\n            tabla.unshift(elemento);              \n    }\n    else if (estadoAlarma == \"inactiva_reconocida\"){ //se saca de la tabla\n        if (index !== -1) \n            // Ya existe → eliminar            \n            tabla.splice(index, 1);   \n            soloReemplazarDatos = true;                     \n    }\n}\nelse\n    return null;\n\nglobal.set(\"tabla_listadoAlarmasActivas\", tabla); \n\nif(soloReemplazarDatos){\n    msg.payload = {\n        command: \"replaceData\",\n        arguments: [tabla]  // tu array con datos actualizados\n    };\n}\nelse\n    msg.payload = [... tabla];\n\nglobal.set(\"global_alarma_ea\" + numeroAlarma, estadoAlarma);\n\nreturn msg;\n\n",
-        "outputs": 1,
-        "timeout": 0,
-        "noerr": 0,
-        "initialize": "",
-        "finalize": "",
-        "libs": [],
-        "x": 420,
-        "y": 80,
-        "wires": [
-            []
-        ]
-    },
-    {
         "id": "3f18b74d7d5f7e5c",
         "type": "ui_template",
         "z": "26dda74cf2221d09",
@@ -4266,7 +3681,7 @@
         "type": "function",
         "z": "1b3ea446545b02f2",
         "name": "Prepara datos obtenidos para la tabla",
-        "func": "let filas = msg.payload;\nlet alarmas = {};\nlet tabla = [];\n\n// Obtener zona horaria desde variable global\nlet zona = global.get(\"zonaHoraria\") || -4;\nlet offsetMs = zona * 60 * 60 * 1000;\n\nfilas.forEach(fila => {\n    let time = fila._time;\n    if (!alarmas[time]) {\n        alarmas[time] = { _time: time };\n    }\n    alarmas[time][fila._field] = fila._value;\n});\n\nObject.values(alarmas).forEach(a => {\n    // Convertir timestamp de InfluxDB a Date\n    let fechaUTC = new Date(a._time);\n\n    // Ajustar según zona horaria\n    let fechaAjustada = new Date(fechaUTC.getTime() + offsetMs);\n\n    // Formatear la fecha ajustada (usando UTC para que no vuelva a aplicar offset del navegador)\n    let fechaLegible = fechaAjustada.toLocaleString(\"es-CL\", {\n        timeZone: \"UTC\",\n        year: \"numeric\",\n        month: \"2-digit\",\n        day: \"2-digit\",\n        hour: \"2-digit\",\n        minute: \"2-digit\",\n        second: \"2-digit\",\n        hour12: false\n    }).replace(',', '');\n\n    let estadoAlarma = a.estadoAlarma || \"\";\n    let clase = \"\";\n    let textoEstado = \"\";\n\n    switch (estadoAlarma) {\n        case \"activa_noReconocida\":\n            clase = \"alarma\";\n            textoEstado = \"Se activa alarma\";\n            break;\n        case \"activa_reconocida\":\n            clase = \"rojo-suave\";\n            textoEstado = \"Se reconoce alarma - Aún activa\";\n            break;\n        case \"inactiva_noReconocida\":\n            clase = \"inactivaNoReconocida\";\n            textoEstado = \"Se desactiva alarma - No reconocida\";\n            break;\n        case \"inactiva_reconocida\":\n            clase = \"normal\";\n            textoEstado = \"Se normaliza alarma\";\n            break;\n        case \"inhibida\":\n            clase = \"inhibida\";\n            textoEstado = \"Alarma inhibida\";\n            break;\n        case \"noInhibida\":\n            clase = \"noInhibida\";\n            textoEstado = \"Alarma No inhibida\";\n            break;\n        default:\n            textoEstado = estadoAlarma;\n            clase = \"\";\n    }\n\n    let alarmaHtml = `<div class=\"alarm-cell ${clase}\">${textoEstado}</div>`;\n\n    tabla.unshift({\n        fecha: fechaLegible,\n        id: a.id,\n        alarma: a.nombre || \"\",\n        estadoAlarma: alarmaHtml,\n        options: {\n            order: [[2, \"desc\"]]\n        }\n    });\n});\n\nmsg.payload = tabla;\nreturn msg;\n\n/*let filas = msg.payload;\nlet alarmas = {};\nlet tabla = [];\n\nfilas.forEach(fila => {\n    let time = fila._time;\n    if (!alarmas[time]) {\n        alarmas[time] = { _time: time };\n    }\n    alarmas[time][fila._field] = fila._value;\n});\n\nObject.values(alarmas).forEach(a => {\n    let fecha = new Date(a._time);\n    let fechaLegible = fecha.toLocaleString(\"es-CL\", {\n        year: \"numeric\", month: \"2-digit\", day: \"2-digit\",\n        hour: \"2-digit\", minute: \"2-digit\", second: \"2-digit\",\n        hour12: false\n    }).replace(',', '');\n\n    let estadoAlarma = a.estadoAlarma || \"\";\n    let clase = \"\";\n    let textoEstado = \"\";\n\n    switch (estadoAlarma) {\n        case \"activa_noReconocida\":\n            clase = \"alarma\";\n            textoEstado = \"Se activa alarma\"; \n            break;\n        case \"activa_reconocida\":\n            clase = \"rojo-suave\";\n            textoEstado = \"Se reconoce alarma - Aún activa\"; \n            break;\n        case \"inactiva_noReconocida\":\n            clase = \"inactivaNoReconocida\";\n            textoEstado = \"Se desactiva alarma - No reconocida\"; \n            break;\n        case \"inactiva_reconocida\":\n            clase = \"normal\";\n            textoEstado = \"Se normaliza alarma\"; \n            break;\n        case \"inhibida\":\n            clase = \"inhibida\";\n            textoEstado = \"Alarma inhibida\"; \n            break;\n        case \"noInhibida\":\n            clase = \"noInhibida\";\n            textoEstado = \"Alarma No inhibida\"; \n            break;\n        default:\n            textoEstado = estadoAlarma;\n            clase = \"\";\n    }\n    \n    let alarmaHtml = `<div class=\"alarm-cell ${clase}\">${textoEstado}</div>`;\n\n    tabla.unshift({\n        fecha: fechaLegible,\n        id: a.id,\n        alarma: a.nombre || \"\",\n        estadoAlarma: alarmaHtml,\n        options: {\n        order: [[2, \"desc\"]] \n        }\n    });\n});\n\n\nmsg.payload = tabla;\nreturn msg;\n*/\n\n\n\n/*let filas = msg.payload;\nlet alarmas = {};\nlet tabla = [];\n\nfilas.forEach(fila => {\n    let time = fila._time;\n    if (!alarmas[time]) {\n        alarmas[time] = { _time: time };\n    }\n    alarmas[time][fila._field] = fila._value;\n});\n\nObject.values(alarmas).forEach(a => {\n    let fecha = new Date(a._time);\n    let fechaLegible = fecha.toLocaleString(\"es-CL\", {\n        year: \"numeric\", month: \"2-digit\", day: \"2-digit\",\n        hour: \"2-digit\", minute: \"2-digit\", second: \"2-digit\",\n        hour12: false\n    }).replace(',', '');\n\n    let estadoAlarma = a.estadoAlarma || \"\";\n    let clase = \"\";\n    let textoEstado = \"\";\n\n    switch (estadoAlarma) {\n        case \"activa_noReconocida\":\n            clase = \"alarma\";\n            textoEstado = \"Se activa alarma\"; \n            break;\n        case \"activa_reconocida\":\n            clase = \"rojo-suave\";\n            textoEstado = \"Se reconoce alarma - Aún activa\"; \n            break;\n        case \"inactiva_noReconocida\":\n            clase = \"inactivaNoReconocida\";\n            textoEstado = \"Se desactiva alarma - No reconocida\"; \n            break;\n        case \"inactiva_reconocida\":\n            clase = \"normal\";\n            textoEstado = \"Se normaliza alarma\"; \n            break;\n        case \"inhibida\":\n            clase = \"inhibida\";\n            textoEstado = \"Alarma inhibida\"; \n            break;\n        case \"noInhibida\":\n            clase = \"noInhibida\";\n            textoEstado = \"Alarma No inhibida\"; \n            break;\n        default:\n            textoEstado = estadoAlarma;\n            clase = \"\";\n    }\n    \n    let alarmaHtml = `<div class=\"alarm-cell ${clase}\">${textoEstado}</div>`;\n\n    tabla.unshift({\n        fecha: fechaLegible,\n        id: a.id,\n        alarma: a.nombre || \"\",\n        estadoAlarma: alarmaHtml,\n        timestamp: fecha.getTime(),\n        options: {\n        order: [[2, \"desc\"]] \n    }\n    });\n});\n\n//ordena por fecha\ntabla.sort((a, b) => b.timestamp - a.timestamp);\n\n//elimina el timestamp antes de enviar\ntabla.forEach(row => delete row.timestamp);\n\n\nmsg.payload = tabla;\nreturn msg;\n\n\n*/",
+        "func": "let filas = msg.payload;\nlet alarmas = {};\nlet tabla = [];\n\n// Obtener zona horaria desde variable global\nlet zona = global.get(\"zonaHoraria\", \"persist\") || -4;\nlet offsetMs = zona * 60 * 60 * 1000;\n\nfilas.forEach(fila => {\n    let time = fila._time;\n    if (!alarmas[time]) {\n        alarmas[time] = { _time: time };\n    }\n    alarmas[time][fila._field] = fila._value;\n});\n\nObject.values(alarmas).forEach(a => {\n    // Convertir timestamp de InfluxDB a Date\n    let fechaUTC = new Date(a._time);\n\n    // Ajustar según zona horaria\n    let fechaAjustada = new Date(fechaUTC.getTime() + offsetMs);\n\n    // Formatear la fecha ajustada (usando UTC para que no vuelva a aplicar offset del navegador)\n    let fechaLegible = fechaAjustada.toLocaleString(\"es-CL\", {\n        timeZone: \"UTC\",\n        year: \"numeric\",\n        month: \"2-digit\",\n        day: \"2-digit\",\n        hour: \"2-digit\",\n        minute: \"2-digit\",\n        second: \"2-digit\",\n        hour12: false\n    }).replace(',', '');\n\n    let estadoAlarma = a.estadoAlarma || \"\";\n    let clase = \"\";\n    let textoEstado = \"\";\n\n    switch (estadoAlarma) {\n        case \"activa_noReconocida\":\n            clase = \"alarma\";\n            textoEstado = \"Se activa alarma\";\n            break;\n        case \"activa_reconocida\":\n            clase = \"rojo-suave\";\n            textoEstado = \"Se reconoce alarma - Aún activa\";\n            break;\n        case \"inactiva_noReconocida\":\n            clase = \"inactivaNoReconocida\";\n            textoEstado = \"Se desactiva alarma - No reconocida\";\n            break;\n        case \"inactiva_reconocida\":\n            clase = \"normal\";\n            textoEstado = \"Se normaliza alarma\";\n            break;\n        case \"inhibida\":\n            clase = \"inhibida\";\n            textoEstado = \"Alarma inhibida\";\n            break;\n        case \"noInhibida\":\n            clase = \"noInhibida\";\n            textoEstado = \"Alarma No inhibida\";\n            break;\n        default:\n            textoEstado = estadoAlarma;\n            clase = \"\";\n    }\n\n    let alarmaHtml = `<div class=\"alarm-cell ${clase}\">${textoEstado}</div>`;\n\n    tabla.unshift({\n        fecha: fechaLegible,\n        id: a.id,\n        alarma: a.nombre || \"\",\n        estadoAlarma: alarmaHtml,\n        options: {\n            order: [[2, \"desc\"]]\n        }\n    });\n});\n\nmsg.payload = tabla;\nreturn msg;\n\n/*let filas = msg.payload;\nlet alarmas = {};\nlet tabla = [];\n\nfilas.forEach(fila => {\n    let time = fila._time;\n    if (!alarmas[time]) {\n        alarmas[time] = { _time: time };\n    }\n    alarmas[time][fila._field] = fila._value;\n});\n\nObject.values(alarmas).forEach(a => {\n    let fecha = new Date(a._time);\n    let fechaLegible = fecha.toLocaleString(\"es-CL\", {\n        year: \"numeric\", month: \"2-digit\", day: \"2-digit\",\n        hour: \"2-digit\", minute: \"2-digit\", second: \"2-digit\",\n        hour12: false\n    }).replace(',', '');\n\n    let estadoAlarma = a.estadoAlarma || \"\";\n    let clase = \"\";\n    let textoEstado = \"\";\n\n    switch (estadoAlarma) {\n        case \"activa_noReconocida\":\n            clase = \"alarma\";\n            textoEstado = \"Se activa alarma\"; \n            break;\n        case \"activa_reconocida\":\n            clase = \"rojo-suave\";\n            textoEstado = \"Se reconoce alarma - Aún activa\"; \n            break;\n        case \"inactiva_noReconocida\":\n            clase = \"inactivaNoReconocida\";\n            textoEstado = \"Se desactiva alarma - No reconocida\"; \n            break;\n        case \"inactiva_reconocida\":\n            clase = \"normal\";\n            textoEstado = \"Se normaliza alarma\"; \n            break;\n        case \"inhibida\":\n            clase = \"inhibida\";\n            textoEstado = \"Alarma inhibida\"; \n            break;\n        case \"noInhibida\":\n            clase = \"noInhibida\";\n            textoEstado = \"Alarma No inhibida\"; \n            break;\n        default:\n            textoEstado = estadoAlarma;\n            clase = \"\";\n    }\n    \n    let alarmaHtml = `<div class=\"alarm-cell ${clase}\">${textoEstado}</div>`;\n\n    tabla.unshift({\n        fecha: fechaLegible,\n        id: a.id,\n        alarma: a.nombre || \"\",\n        estadoAlarma: alarmaHtml,\n        options: {\n        order: [[2, \"desc\"]] \n        }\n    });\n});\n\n\nmsg.payload = tabla;\nreturn msg;\n*/\n\n\n\n/*let filas = msg.payload;\nlet alarmas = {};\nlet tabla = [];\n\nfilas.forEach(fila => {\n    let time = fila._time;\n    if (!alarmas[time]) {\n        alarmas[time] = { _time: time };\n    }\n    alarmas[time][fila._field] = fila._value;\n});\n\nObject.values(alarmas).forEach(a => {\n    let fecha = new Date(a._time);\n    let fechaLegible = fecha.toLocaleString(\"es-CL\", {\n        year: \"numeric\", month: \"2-digit\", day: \"2-digit\",\n        hour: \"2-digit\", minute: \"2-digit\", second: \"2-digit\",\n        hour12: false\n    }).replace(',', '');\n\n    let estadoAlarma = a.estadoAlarma || \"\";\n    let clase = \"\";\n    let textoEstado = \"\";\n\n    switch (estadoAlarma) {\n        case \"activa_noReconocida\":\n            clase = \"alarma\";\n            textoEstado = \"Se activa alarma\"; \n            break;\n        case \"activa_reconocida\":\n            clase = \"rojo-suave\";\n            textoEstado = \"Se reconoce alarma - Aún activa\"; \n            break;\n        case \"inactiva_noReconocida\":\n            clase = \"inactivaNoReconocida\";\n            textoEstado = \"Se desactiva alarma - No reconocida\"; \n            break;\n        case \"inactiva_reconocida\":\n            clase = \"normal\";\n            textoEstado = \"Se normaliza alarma\"; \n            break;\n        case \"inhibida\":\n            clase = \"inhibida\";\n            textoEstado = \"Alarma inhibida\"; \n            break;\n        case \"noInhibida\":\n            clase = \"noInhibida\";\n            textoEstado = \"Alarma No inhibida\"; \n            break;\n        default:\n            textoEstado = estadoAlarma;\n            clase = \"\";\n    }\n    \n    let alarmaHtml = `<div class=\"alarm-cell ${clase}\">${textoEstado}</div>`;\n\n    tabla.unshift({\n        fecha: fechaLegible,\n        id: a.id,\n        alarma: a.nombre || \"\",\n        estadoAlarma: alarmaHtml,\n        timestamp: fecha.getTime(),\n        options: {\n        order: [[2, \"desc\"]] \n    }\n    });\n});\n\n//ordena por fecha\ntabla.sort((a, b) => b.timestamp - a.timestamp);\n\n//elimina el timestamp antes de enviar\ntabla.forEach(row => delete row.timestamp);\n\n\nmsg.payload = tabla;\nreturn msg;\n\n\n*/",
         "outputs": 1,
         "timeout": 0,
         "noerr": 0,
@@ -4286,7 +3701,7 @@
         "type": "function",
         "z": "1b3ea446545b02f2",
         "name": "genera consula entre fechas y horas seleccionadas",
-        "func": "// Obtener fechas y horas desde el flow context\nlet fecha_inicio = flow.get(\"fecha_inicio\");\nlet hora_inicio = flow.get(\"hora_inicio\");\nlet fecha_final = flow.get(\"fecha_final\");\nlet hora_final = flow.get(\"hora_final\");\n\n// Obtener zona horaria desde variable global\nlet zona = global.get(\"zonaHoraria\") || -4;  // -4 o -3\nlet offsetMs = zona * 60 * 60 * 1000;\n\n// Validar que todas las variables estén presentes\nif (!fecha_inicio || !hora_inicio || !fecha_final || !hora_final) {\n    node.error(\"Falta fecha u hora en variables del flow.\");\n    return null;\n}\n\n// Combinar fecha y hora (asumiendo que viene en hora local UTC-4 o UTC-3)\nfunction combinarFechaHora(fechaMs, horaStr) {\n    let fecha = new Date(fechaMs);\n    let partes = horaStr.trim().split(\":\");\n    if (partes.length < 2) {\n        node.error(\"Formato de hora inválido: \" + horaStr);\n        return null;\n    }\n    let hora = parseInt(partes[0], 10);\n    let minuto = parseInt(partes[1], 10);\n    fecha.setHours(hora);\n    fecha.setMinutes(minuto);\n    fecha.setSeconds(0);\n    fecha.setMilliseconds(0);\n    return fecha;\n}\n\nlet fechaHoraInicioLocal = combinarFechaHora(fecha_inicio, hora_inicio);\nlet fechaHoraFinalLocal = combinarFechaHora(fecha_final, hora_final);\n\n// Verificación de que se hayan podido combinar bien\nif (!fechaHoraInicioLocal || !fechaHoraFinalLocal) return null;\n\n// Validar que la hora de inicio sea anterior a la final\nif (fechaHoraInicioLocal >= fechaHoraFinalLocal) {\n    //Error en selección de fechas    \n    return null;\n}\n\n// Convertir de hora local a UTC restando el offset\n// Si zona = -4, restamos -4 horas (sumamos 4 horas) para llegar a UTC\n// Si zona = -3, restamos -3 horas (sumamos 3 horas) para llegar a UTC\nlet fechaHoraInicioUTC = new Date(fechaHoraInicioLocal.getTime() - offsetMs);\nlet fechaHoraFinalUTC = new Date(fechaHoraFinalLocal.getTime() - offsetMs);\n\n// Convertir a formato ISO (ya en UTC)\nlet startISO = fechaHoraInicioUTC.toISOString();\nlet stopISO = fechaHoraFinalUTC.toISOString();\n\n// Construir la consulta Flux\nmsg.query = `\nfrom(bucket: \"HistoricoAlarmas\")\n  |> range(start: ${startISO}, stop: ${stopISO})\n  |> filter(fn: (r) => r._measurement == \"Alarmas\")\n  |> sort(columns: [\"_time\"], desc: false)\n`;\n\nreturn msg;\n\n\n\n/*\n// Obtener fechas y horas desde el flow context\nlet fecha_inicio = flow.get(\"fecha_inicio\");\nlet hora_inicio = flow.get(\"hora_inicio\");\nlet fecha_final = flow.get(\"fecha_final\");\nlet hora_final = flow.get(\"hora_final\");\n\n// Validar que todas las variables estén presentes\nif (!fecha_inicio || !hora_inicio || !fecha_final || !hora_final) {\n    node.error(\"Falta fecha u hora en variables del flow.\");\n    return null;\n}\n\n// Combinar fecha y hora\nfunction combinarFechaHora(fechaMs, horaStr) {\n    let fecha = new Date(fechaMs);\n    let partes = horaStr.trim().split(\":\");\n    if (partes.length < 2) {\n        node.error(\"Formato de hora inválido: \" + horaStr);\n        return null;\n    }\n    let hora = parseInt(partes[0], 10);\n    let minuto = parseInt(partes[1], 10);\n    fecha.setHours(hora);\n    fecha.setMinutes(minuto);\n    fecha.setSeconds(0);\n    fecha.setMilliseconds(0);\n    return fecha;\n}\n\nlet fechaHoraInicio = combinarFechaHora(fecha_inicio, hora_inicio);\nlet fechaHoraFinal = combinarFechaHora(fecha_final, hora_final);\n\n\n// Verificación de que se hayan podido combinar bien\nif (!fechaHoraInicio || !fechaHoraFinal) return null;\n\n// Validar que la hora de inicio sea anterior a la final\nif (fechaHoraInicio >= fechaHoraFinal) {\n    //Error en selección de fechas    \n    return null;\n}\n\n// Convertir a formato ISO\nlet startISO = fechaHoraInicio.toISOString();\nlet stopISO = fechaHoraFinal.toISOString();\n\n// Construir la consulta Flux\nmsg.query = `\nfrom(bucket: \"HistoricoAlarmas\")\n  |> range(start: ${startISO}, stop: ${stopISO})\n  |> filter(fn: (r) => r._measurement == \"Alarmas\")\n  |> sort(columns: [\"_time\"], desc: false)\n`;\n\nreturn msg;\n*/\n\n\n\n/*\n// Obtener fechas y horas desde el flow context\nlet fecha_inicio = flow.get(\"fecha_inicio\");\nlet hora_inicio = flow.get(\"hora_inicio\");\nlet fecha_final = flow.get(\"fecha_final\");\nlet hora_final = flow.get(\"hora_final\");\n\n// Validar que todas las variables estén presentes\nif (!fecha_inicio || !hora_inicio || !fecha_final || !hora_final) {\n    node.error(\"Falta fecha u hora en variables del flow.\");\n    return null;\n}\n\n// Combinar fecha y hora\nfunction combinarFechaHora(fechaMs, horaStr) {\n    let fecha = new Date(fechaMs);\n    let partes = horaStr.trim().split(\":\");\n    if (partes.length < 2) {\n        node.error(\"Formato de hora inválido: \" + horaStr);\n        return null;\n    }\n    let hora = parseInt(partes[0], 10);\n    let minuto = parseInt(partes[1], 10);\n    fecha.setHours(hora);\n    fecha.setMinutes(minuto);\n    fecha.setSeconds(0);\n    fecha.setMilliseconds(0);\n    return fecha;\n}\n\nlet fechaHoraInicio = combinarFechaHora(fecha_inicio, hora_inicio);\nlet fechaHoraFinal = combinarFechaHora(fecha_final, hora_final);\n\n\n// Verificación de que se hayan podido combinar bien\nif (!fechaHoraInicio || !fechaHoraFinal) return null;\n\n// Validar que la hora de inicio sea anterior a la final\nif (fechaHoraInicio >= fechaHoraFinal) {\n    //Error en selección de fechas    \n    return null;\n}\n\n// Convertir a formato ISO\nlet startISO = fechaHoraInicio.toISOString();\nlet stopISO = fechaHoraFinal.toISOString();\n\n// Construir la consulta Flux\nmsg.query = `\nfrom(bucket: \"HistoricoAlarmas\")\n  |> range(start: ${startISO}, stop: ${stopISO})\n  |> filter(fn: (r) => r._measurement == \"Alarmas\")\n  |> sort(columns: [\"_time\"], desc: false)\n`;\n\nreturn msg;\n*/",
+        "func": "// Obtener fechas y horas desde el flow context\nlet fecha_inicio = flow.get(\"fecha_inicio\");\nlet hora_inicio = flow.get(\"hora_inicio\");\nlet fecha_final = flow.get(\"fecha_final\");\nlet hora_final = flow.get(\"hora_final\");\n\n// Obtener zona horaria desde variable global\nlet zona = global.get(\"zonaHoraria\", \"persist\") || -4;  // -4 o -3\nlet offsetMs = zona * 60 * 60 * 1000;\n\n// Validar que todas las variables estén presentes\nif (!fecha_inicio || !hora_inicio || !fecha_final || !hora_final) {\n    node.error(\"Falta fecha u hora en variables del flow.\");\n    return null;\n}\n\n// Combinar fecha y hora (asumiendo que viene en hora local UTC-4 o UTC-3)\nfunction combinarFechaHora(fechaMs, horaStr) {\n    let fecha = new Date(fechaMs);\n    let partes = horaStr.trim().split(\":\");\n    if (partes.length < 2) {\n        node.error(\"Formato de hora inválido: \" + horaStr);\n        return null;\n    }\n    let hora = parseInt(partes[0], 10);\n    let minuto = parseInt(partes[1], 10);\n    fecha.setHours(hora);\n    fecha.setMinutes(minuto);\n    fecha.setSeconds(0);\n    fecha.setMilliseconds(0);\n    return fecha;\n}\n\nlet fechaHoraInicioLocal = combinarFechaHora(fecha_inicio, hora_inicio);\nlet fechaHoraFinalLocal = combinarFechaHora(fecha_final, hora_final);\n\n// Verificación de que se hayan podido combinar bien\nif (!fechaHoraInicioLocal || !fechaHoraFinalLocal) return null;\n\n// Validar que la hora de inicio sea anterior a la final\nif (fechaHoraInicioLocal >= fechaHoraFinalLocal) {\n    //Error en selección de fechas    \n    return null;\n}\n\n// Convertir de hora local a UTC restando el offset\n// Si zona = -4, restamos -4 horas (sumamos 4 horas) para llegar a UTC\n// Si zona = -3, restamos -3 horas (sumamos 3 horas) para llegar a UTC\nlet fechaHoraInicioUTC = new Date(fechaHoraInicioLocal.getTime() - offsetMs);\nlet fechaHoraFinalUTC = new Date(fechaHoraFinalLocal.getTime() - offsetMs);\n\n// Convertir a formato ISO (ya en UTC)\nlet startISO = fechaHoraInicioUTC.toISOString();\nlet stopISO = fechaHoraFinalUTC.toISOString();\n\n// Construir la consulta Flux\nmsg.query = `\nfrom(bucket: \"HistoricoAlarmas\")\n  |> range(start: ${startISO}, stop: ${stopISO})\n  |> filter(fn: (r) => r._measurement == \"Alarmas\")\n  |> sort(columns: [\"_time\"], desc: false)\n`;\n\nreturn msg;\n\n\n\n/*\n// Obtener fechas y horas desde el flow context\nlet fecha_inicio = flow.get(\"fecha_inicio\");\nlet hora_inicio = flow.get(\"hora_inicio\");\nlet fecha_final = flow.get(\"fecha_final\");\nlet hora_final = flow.get(\"hora_final\");\n\n// Validar que todas las variables estén presentes\nif (!fecha_inicio || !hora_inicio || !fecha_final || !hora_final) {\n    node.error(\"Falta fecha u hora en variables del flow.\");\n    return null;\n}\n\n// Combinar fecha y hora\nfunction combinarFechaHora(fechaMs, horaStr) {\n    let fecha = new Date(fechaMs);\n    let partes = horaStr.trim().split(\":\");\n    if (partes.length < 2) {\n        node.error(\"Formato de hora inválido: \" + horaStr);\n        return null;\n    }\n    let hora = parseInt(partes[0], 10);\n    let minuto = parseInt(partes[1], 10);\n    fecha.setHours(hora);\n    fecha.setMinutes(minuto);\n    fecha.setSeconds(0);\n    fecha.setMilliseconds(0);\n    return fecha;\n}\n\nlet fechaHoraInicio = combinarFechaHora(fecha_inicio, hora_inicio);\nlet fechaHoraFinal = combinarFechaHora(fecha_final, hora_final);\n\n\n// Verificación de que se hayan podido combinar bien\nif (!fechaHoraInicio || !fechaHoraFinal) return null;\n\n// Validar que la hora de inicio sea anterior a la final\nif (fechaHoraInicio >= fechaHoraFinal) {\n    //Error en selección de fechas    \n    return null;\n}\n\n// Convertir a formato ISO\nlet startISO = fechaHoraInicio.toISOString();\nlet stopISO = fechaHoraFinal.toISOString();\n\n// Construir la consulta Flux\nmsg.query = `\nfrom(bucket: \"HistoricoAlarmas\")\n  |> range(start: ${startISO}, stop: ${stopISO})\n  |> filter(fn: (r) => r._measurement == \"Alarmas\")\n  |> sort(columns: [\"_time\"], desc: false)\n`;\n\nreturn msg;\n*/\n\n\n\n/*\n// Obtener fechas y horas desde el flow context\nlet fecha_inicio = flow.get(\"fecha_inicio\");\nlet hora_inicio = flow.get(\"hora_inicio\");\nlet fecha_final = flow.get(\"fecha_final\");\nlet hora_final = flow.get(\"hora_final\");\n\n// Validar que todas las variables estén presentes\nif (!fecha_inicio || !hora_inicio || !fecha_final || !hora_final) {\n    node.error(\"Falta fecha u hora en variables del flow.\");\n    return null;\n}\n\n// Combinar fecha y hora\nfunction combinarFechaHora(fechaMs, horaStr) {\n    let fecha = new Date(fechaMs);\n    let partes = horaStr.trim().split(\":\");\n    if (partes.length < 2) {\n        node.error(\"Formato de hora inválido: \" + horaStr);\n        return null;\n    }\n    let hora = parseInt(partes[0], 10);\n    let minuto = parseInt(partes[1], 10);\n    fecha.setHours(hora);\n    fecha.setMinutes(minuto);\n    fecha.setSeconds(0);\n    fecha.setMilliseconds(0);\n    return fecha;\n}\n\nlet fechaHoraInicio = combinarFechaHora(fecha_inicio, hora_inicio);\nlet fechaHoraFinal = combinarFechaHora(fecha_final, hora_final);\n\n\n// Verificación de que se hayan podido combinar bien\nif (!fechaHoraInicio || !fechaHoraFinal) return null;\n\n// Validar que la hora de inicio sea anterior a la final\nif (fechaHoraInicio >= fechaHoraFinal) {\n    //Error en selección de fechas    \n    return null;\n}\n\n// Convertir a formato ISO\nlet startISO = fechaHoraInicio.toISOString();\nlet stopISO = fechaHoraFinal.toISOString();\n\n// Construir la consulta Flux\nmsg.query = `\nfrom(bucket: \"HistoricoAlarmas\")\n  |> range(start: ${startISO}, stop: ${stopISO})\n  |> filter(fn: (r) => r._measurement == \"Alarmas\")\n  |> sort(columns: [\"_time\"], desc: false)\n`;\n\nreturn msg;\n*/",
         "outputs": 1,
         "timeout": 0,
         "noerr": 0,
@@ -5065,7 +4480,7 @@
         "topic": "topic",
         "topicType": "msg",
         "className": "",
-        "x": 190,
+        "x": 850,
         "y": 100,
         "wires": [
             [
@@ -5077,15 +4492,15 @@
         "id": "2d2ecf1b668d1213",
         "type": "function",
         "z": "c0914591e7def14a",
-        "name": "function 78",
-        "func": "global.set(\"zonaHoraria\", msg.payload)\nreturn msg;",
+        "name": "Guarda zona horaria seleccionada",
+        "func": "global.set(\"zonaHoraria\", msg.payload, \"persist\")\nreturn msg;",
         "outputs": 1,
         "timeout": 0,
         "noerr": 0,
         "initialize": "",
         "finalize": "",
         "libs": [],
-        "x": 390,
+        "x": 1180,
         "y": 100,
         "wires": [
             []
@@ -5214,6 +4629,40 @@
         "y": 240,
         "wires": [
             []
+        ]
+    },
+    {
+        "id": "4b6097eed2b733e2",
+        "type": "ui_ui_control",
+        "z": "c0914591e7def14a",
+        "name": "",
+        "events": "all",
+        "x": 160,
+        "y": 100,
+        "wires": [
+            [
+                "fe1b799d20c3d6f9"
+            ]
+        ]
+    },
+    {
+        "id": "fe1b799d20c3d6f9",
+        "type": "function",
+        "z": "c0914591e7def14a",
+        "name": "Lee el valor de zona horario guardado en disco ",
+        "func": "msg.payload = global.get(\"zonaHoraria\", \"persist\");\nreturn msg;",
+        "outputs": 1,
+        "timeout": 0,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 480,
+        "y": 100,
+        "wires": [
+            [
+                "d83f33761fbcf8d2"
+            ]
         ]
     },
     {
@@ -8432,7 +7881,7 @@
         "type": "function",
         "z": "5ca5ab6bbe6b937a",
         "name": "Prepara datos para graficarlos",
-        "func": "const datosInflux = msg.payload;\n\nlet seriesMap = {}; \nlet outObj = [{\n    series: [],\n    data: [],\n    labels: [\"\"]\n}];\n\n// Obtener el desfase de zona horaria (ej: -4 o -3)\nlet zona = global.get(\"zonaHoraria\");     // número entero\nlet offsetMs = zona * 60 * 60 * 1000;     // convertir a milisegundos\n\nfor (let item of datosInflux) {\n    let tag = item.tag;\n\n    // Si el sensor aún no está registrado en la serie, lo agregamos\n    if (!(tag in seriesMap)) {\n        seriesMap[tag] = outObj[0].series.length;\n\n        let nombre = global.get(\"nombreAnalogo\" + tag);\n        outObj[0].series.push(nombre);\n        outObj[0].data.push([]);\n    }\n\n    let index = seriesMap[tag];\n\n    // Convertir el tiempo recibido (UTC 0) a la zona horaria definida\n    let fechaUTC = new Date(item._time);       // viene en UTC\n    let fechaLocal = new Date(fechaUTC.getTime() + offsetMs);\n\n    outObj[0].data[index].push({\n        x: fechaLocal,     // ahora está en UTC-3 o UTC-4 según la variable\n        y: item._value\n    });\n}\n\nmsg.payload = outObj;\nreturn msg;\n\n\n\n\n/*const datosInflux = msg.payload;\n\nlet seriesMap = {}; // Para mapear nombre del sensor a su índice en los arrays\nlet outObj = [{\n    series: [],\n    data: [],\n    labels: [\"\"]\n}];\n\nfor (let item of datosInflux) {\n    let tag = item.tag;\n\n    // Si el sensor aún no está registrado en la serie, lo agregamos\n    if (!(tag in seriesMap)) {\n        seriesMap[tag] = outObj[0].series.length; // índice actual\n        let nombre = global.get(\"nombreAnalogo\" + tag)\n        outObj[0].series.push(nombre);               // nombre del sensor\n        outObj[0].data.push([]);                    // array de datos vacío\n    }\n\n    let index = seriesMap[tag];\n    outObj[0].data[index].push({\n        x: item._time,\n        y: item._value\n    });\n}\n\nmsg.payload = outObj;\nreturn msg;\n*/",
+        "func": "const datosInflux = msg.payload;\n\nlet seriesMap = {}; \nlet outObj = [{\n    series: [],\n    data: [],\n    labels: [\"\"]\n}];\n\n// Obtener el desfase de zona horaria (ej: -4 o -3)\nlet zona = global.get(\"zonaHoraria\", \"persist\");     // número entero\nlet offsetMs = zona * 60 * 60 * 1000;     // convertir a milisegundos\n\nfor (let item of datosInflux) {\n    let tag = item.tag;\n\n    // Si el sensor aún no está registrado en la serie, lo agregamos\n    if (!(tag in seriesMap)) {\n        seriesMap[tag] = outObj[0].series.length;\n\n        let nombre = global.get(\"nombreAnalogo\" + tag);\n        outObj[0].series.push(nombre);\n        outObj[0].data.push([]);\n    }\n\n    let index = seriesMap[tag];\n\n    // Convertir el tiempo recibido (UTC 0) a la zona horaria definida\n    let fechaUTC = new Date(item._time);       // viene en UTC\n    let fechaLocal = new Date(fechaUTC.getTime() + offsetMs);\n\n    outObj[0].data[index].push({\n        x: fechaLocal,     // ahora está en UTC-3 o UTC-4 según la variable\n        y: item._value\n    });\n}\n\nmsg.payload = outObj;\nreturn msg;\n\n\n\n\n/*const datosInflux = msg.payload;\n\nlet seriesMap = {}; // Para mapear nombre del sensor a su índice en los arrays\nlet outObj = [{\n    series: [],\n    data: [],\n    labels: [\"\"]\n}];\n\nfor (let item of datosInflux) {\n    let tag = item.tag;\n\n    // Si el sensor aún no está registrado en la serie, lo agregamos\n    if (!(tag in seriesMap)) {\n        seriesMap[tag] = outObj[0].series.length; // índice actual\n        let nombre = global.get(\"nombreAnalogo\" + tag)\n        outObj[0].series.push(nombre);               // nombre del sensor\n        outObj[0].data.push([]);                    // array de datos vacío\n    }\n\n    let index = seriesMap[tag];\n    outObj[0].data[index].push({\n        x: item._time,\n        y: item._value\n    });\n}\n\nmsg.payload = outObj;\nreturn msg;\n*/",
         "outputs": 1,
         "timeout": 0,
         "noerr": 0,
@@ -8452,7 +7901,7 @@
         "type": "function",
         "z": "5ca5ab6bbe6b937a",
         "name": "genera consula entre fechas y horas seleccionadas",
-        "func": "// Obtener fechas y horas desde el flow context\nlet fecha_inicio = flow.get(\"fecha_inicio\");\nlet hora_inicio = flow.get(\"hora_inicio\");\nlet fecha_final = flow.get(\"fecha_final\");\nlet hora_final = flow.get(\"hora_final\");\n\n// Obtener sensores seleccionados\nlet sensoresSeleccionados = flow.get(\"sensoresSeleccionados\");\n\n// Validar que todas las variables estén presentes\nif (!fecha_inicio || !hora_inicio || !fecha_final || !hora_final || !Array.isArray(sensoresSeleccionados) || sensoresSeleccionados.length === 0) {\n    node.error(\"Falta fecha, hora o sensores seleccionados en variables del flow.\");\n    return null;\n}\n\n// Combinar fecha y hora\nfunction combinarFechaHora(fechaMs, horaStr) {\n    let fecha = new Date(fechaMs);\n    let partes = horaStr.trim().split(\":\");\n    if (partes.length < 2) {\n        node.error(\"Formato de hora inválido: \" + horaStr);\n        return null;\n    }\n    let hora = parseInt(partes[0], 10);\n    let minuto = parseInt(partes[1], 10);\n    fecha.setHours(hora);\n    fecha.setMinutes(minuto);\n    fecha.setSeconds(0);\n    fecha.setMilliseconds(0);\n    return fecha;\n}\n\nlet fechaHoraInicio = combinarFechaHora(fecha_inicio, hora_inicio);\nlet fechaHoraFinal = combinarFechaHora(fecha_final, hora_final);\n\n// Verificación de que se hayan podido combinar bien\nif (!fechaHoraInicio || !fechaHoraFinal) return null;\n\n// Validar que la hora de inicio sea anterior a la final\nif (fechaHoraInicio >= fechaHoraFinal) {\n    node.error(\"La hora de inicio debe ser anterior a la hora final.\");\n    return null;\n}\n\n// Obtener desfase horario\nlet zona = global.get(\"zonaHoraria\");  // -3 o -4\nlet offsetMs = zona * 60 * 60 * 1000;\n\n// Convertir horas locales → UTC\nlet inicioUTC = new Date(fechaHoraInicio.getTime() - offsetMs);\nlet finalUTC  = new Date(fechaHoraFinal.getTime() - offsetMs);\n\n// Calcular intervalo para un máximo de 400 puntos\nconst maxPoints = 400;\nconst durationMs = finalUTC.getTime() - inicioUTC.getTime();\nconst intervalMs = Math.floor(durationMs / maxPoints);\nconst intervalFlux = intervalMs + \"ms\";\n\n// Convertir a formato ISO UTC\nlet startISO = inicioUTC.toISOString();\nlet stopISO = finalUTC.toISOString();\n\n// Construir filtro dinámico para los sensores\nconst filtroCampos = sensoresSeleccionados.map(s => `r[\"tag\"] == \"${s}\"`).join(\" or \");\n\n// Construir la consulta Flux\nmsg.query = `\nfrom(bucket: \"HistoricoAnalogos\")\n  |> range(start: ${startISO}, stop: ${stopISO})\n  |> filter(fn: (r) => r._measurement == \"Analogos\")\n  |> filter(fn: (r) => r[\"_field\"] == \"valor\")\n  |> filter(fn: (r) => ${filtroCampos})\n  |> aggregateWindow(every: ${intervalFlux}, fn: mean, createEmpty: false)\n`;\n\nreturn msg;\n\n\n\n/*\n// Obtener fechas y horas desde el flow context\nlet fecha_inicio = flow.get(\"fecha_inicio\");\nlet hora_inicio = flow.get(\"hora_inicio\");\nlet fecha_final = flow.get(\"fecha_final\");\nlet hora_final = flow.get(\"hora_final\");\n\n// Obtener sensores seleccionados\nlet sensoresSeleccionados = flow.get(\"sensoresSeleccionados\");\n\n// Validar que todas las variables estén presentes\nif (!fecha_inicio || !hora_inicio || !fecha_final || !hora_final || !Array.isArray(sensoresSeleccionados) || sensoresSeleccionados.length === 0) {\n    node.error(\"Falta fecha, hora o sensores seleccionados en variables del flow.\");\n    return null;\n}\n\n// Combinar fecha y hora\nfunction combinarFechaHora(fechaMs, horaStr) {\n    let fecha = new Date(fechaMs);\n    let partes = horaStr.trim().split(\":\");\n    if (partes.length < 2) {\n        node.error(\"Formato de hora inválido: \" + horaStr);\n        return null;\n    }\n    let hora = parseInt(partes[0], 10);\n    let minuto = parseInt(partes[1], 10);\n    fecha.setHours(hora);\n    fecha.setMinutes(minuto);\n    fecha.setSeconds(0);\n    fecha.setMilliseconds(0);\n    return fecha;\n}\n\nlet fechaHoraInicio = combinarFechaHora(fecha_inicio, hora_inicio);\nlet fechaHoraFinal = combinarFechaHora(fecha_final, hora_final);\n\n// Verificación de que se hayan podido combinar bien\nif (!fechaHoraInicio || !fechaHoraFinal) return null;\n\n// Validar que la hora de inicio sea anterior a la final\nif (fechaHoraInicio >= fechaHoraFinal) {\n    node.error(\"La hora de inicio debe ser anterior a la hora final.\");\n    return null;\n}\n\n// Calcular intervalo para un máximo de 400 puntos\nconst maxPoints = 400;\nconst durationMs = fechaHoraFinal.getTime() - fechaHoraInicio.getTime();\nconst intervalMs = Math.floor(durationMs / maxPoints);\nconst intervalFlux = intervalMs + \"ms\";\n\n// Convertir a formato ISO\nlet startISO = fechaHoraInicio.toISOString();\nlet stopISO = fechaHoraFinal.toISOString();\n\n// Construir filtro dinámico para los sensores\nconst filtroCampos = sensoresSeleccionados.map(s => `r[\"tag\"] == \"${s}\"`).join(\" or \");\n\n// Construir la consulta Flux\nmsg.query = `\nfrom(bucket: \"HistoricoAnalogos\")\n  |> range(start: ${startISO}, stop: ${stopISO})\n  |> filter(fn: (r) => r._measurement == \"Analogos\")\n  |> filter(fn: (r) => r[\"_field\"] == \"valor\")\n  |> filter(fn: (r) => ${filtroCampos})\n  |> aggregateWindow(every: ${intervalFlux}, fn: mean, createEmpty: false)\n`;\n/* ejemplo\n  |> range(start: 2025-07-28T18:00:00.000Z, stop: 2025-07-28T23:00:00.000Z)\n  |> filter(fn: (r) => r[\"_measurement\"] == \"Analogos\")\n  |> filter(fn: (r) => r[\"_field\"] == \"valor\")\n  |> filter(fn: (r) => r[\"tag\"] == \"10\" or r[\"tag\"] == \"12\")\n  |> aggregateWindow(every: v.windowPeriod, fn: mean, createEmpty: false)\n  |> yield(name: \"mean\")\n*/\n//return msg;\n\n\n",
+        "func": "// Obtener fechas y horas desde el flow context\nlet fecha_inicio = flow.get(\"fecha_inicio\");\nlet hora_inicio = flow.get(\"hora_inicio\");\nlet fecha_final = flow.get(\"fecha_final\");\nlet hora_final = flow.get(\"hora_final\");\n\n// Obtener sensores seleccionados\nlet sensoresSeleccionados = flow.get(\"sensoresSeleccionados\");\n\n// Validar que todas las variables estén presentes\nif (!fecha_inicio || !hora_inicio || !fecha_final || !hora_final || !Array.isArray(sensoresSeleccionados) || sensoresSeleccionados.length === 0) {\n    node.error(\"Falta fecha, hora o sensores seleccionados en variables del flow.\");\n    return null;\n}\n\n// Combinar fecha y hora\nfunction combinarFechaHora(fechaMs, horaStr) {\n    let fecha = new Date(fechaMs);\n    let partes = horaStr.trim().split(\":\");\n    if (partes.length < 2) {\n        node.error(\"Formato de hora inválido: \" + horaStr);\n        return null;\n    }\n    let hora = parseInt(partes[0], 10);\n    let minuto = parseInt(partes[1], 10);\n    fecha.setHours(hora);\n    fecha.setMinutes(minuto);\n    fecha.setSeconds(0);\n    fecha.setMilliseconds(0);\n    return fecha;\n}\n\nlet fechaHoraInicio = combinarFechaHora(fecha_inicio, hora_inicio);\nlet fechaHoraFinal = combinarFechaHora(fecha_final, hora_final);\n\n// Verificación de que se hayan podido combinar bien\nif (!fechaHoraInicio || !fechaHoraFinal) return null;\n\n// Validar que la hora de inicio sea anterior a la final\nif (fechaHoraInicio >= fechaHoraFinal) {\n    node.error(\"La hora de inicio debe ser anterior a la hora final.\");\n    return null;\n}\n\n// Obtener desfase horario\nlet zona = global.get(\"zonaHoraria\", \"persist\");  // -3 o -4\nlet offsetMs = zona * 60 * 60 * 1000;\n\n// Convertir horas locales → UTC\nlet inicioUTC = new Date(fechaHoraInicio.getTime() - offsetMs);\nlet finalUTC  = new Date(fechaHoraFinal.getTime() - offsetMs);\n\n// Calcular intervalo para un máximo de 400 puntos\nconst maxPoints = 400;\nconst durationMs = finalUTC.getTime() - inicioUTC.getTime();\nconst intervalMs = Math.floor(durationMs / maxPoints);\nconst intervalFlux = intervalMs + \"ms\";\n\n// Convertir a formato ISO UTC\nlet startISO = inicioUTC.toISOString();\nlet stopISO = finalUTC.toISOString();\n\n// Construir filtro dinámico para los sensores\nconst filtroCampos = sensoresSeleccionados.map(s => `r[\"tag\"] == \"${s}\"`).join(\" or \");\n\n// Construir la consulta Flux\nmsg.query = `\nfrom(bucket: \"HistoricoAnalogos\")\n  |> range(start: ${startISO}, stop: ${stopISO})\n  |> filter(fn: (r) => r._measurement == \"Analogos\")\n  |> filter(fn: (r) => r[\"_field\"] == \"valor\")\n  |> filter(fn: (r) => ${filtroCampos})\n  |> aggregateWindow(every: ${intervalFlux}, fn: mean, createEmpty: false)\n`;\n\nreturn msg;\n\n\n\n/*\n// Obtener fechas y horas desde el flow context\nlet fecha_inicio = flow.get(\"fecha_inicio\");\nlet hora_inicio = flow.get(\"hora_inicio\");\nlet fecha_final = flow.get(\"fecha_final\");\nlet hora_final = flow.get(\"hora_final\");\n\n// Obtener sensores seleccionados\nlet sensoresSeleccionados = flow.get(\"sensoresSeleccionados\");\n\n// Validar que todas las variables estén presentes\nif (!fecha_inicio || !hora_inicio || !fecha_final || !hora_final || !Array.isArray(sensoresSeleccionados) || sensoresSeleccionados.length === 0) {\n    node.error(\"Falta fecha, hora o sensores seleccionados en variables del flow.\");\n    return null;\n}\n\n// Combinar fecha y hora\nfunction combinarFechaHora(fechaMs, horaStr) {\n    let fecha = new Date(fechaMs);\n    let partes = horaStr.trim().split(\":\");\n    if (partes.length < 2) {\n        node.error(\"Formato de hora inválido: \" + horaStr);\n        return null;\n    }\n    let hora = parseInt(partes[0], 10);\n    let minuto = parseInt(partes[1], 10);\n    fecha.setHours(hora);\n    fecha.setMinutes(minuto);\n    fecha.setSeconds(0);\n    fecha.setMilliseconds(0);\n    return fecha;\n}\n\nlet fechaHoraInicio = combinarFechaHora(fecha_inicio, hora_inicio);\nlet fechaHoraFinal = combinarFechaHora(fecha_final, hora_final);\n\n// Verificación de que se hayan podido combinar bien\nif (!fechaHoraInicio || !fechaHoraFinal) return null;\n\n// Validar que la hora de inicio sea anterior a la final\nif (fechaHoraInicio >= fechaHoraFinal) {\n    node.error(\"La hora de inicio debe ser anterior a la hora final.\");\n    return null;\n}\n\n// Calcular intervalo para un máximo de 400 puntos\nconst maxPoints = 400;\nconst durationMs = fechaHoraFinal.getTime() - fechaHoraInicio.getTime();\nconst intervalMs = Math.floor(durationMs / maxPoints);\nconst intervalFlux = intervalMs + \"ms\";\n\n// Convertir a formato ISO\nlet startISO = fechaHoraInicio.toISOString();\nlet stopISO = fechaHoraFinal.toISOString();\n\n// Construir filtro dinámico para los sensores\nconst filtroCampos = sensoresSeleccionados.map(s => `r[\"tag\"] == \"${s}\"`).join(\" or \");\n\n// Construir la consulta Flux\nmsg.query = `\nfrom(bucket: \"HistoricoAnalogos\")\n  |> range(start: ${startISO}, stop: ${stopISO})\n  |> filter(fn: (r) => r._measurement == \"Analogos\")\n  |> filter(fn: (r) => r[\"_field\"] == \"valor\")\n  |> filter(fn: (r) => ${filtroCampos})\n  |> aggregateWindow(every: ${intervalFlux}, fn: mean, createEmpty: false)\n`;\n/* ejemplo\n  |> range(start: 2025-07-28T18:00:00.000Z, stop: 2025-07-28T23:00:00.000Z)\n  |> filter(fn: (r) => r[\"_measurement\"] == \"Analogos\")\n  |> filter(fn: (r) => r[\"_field\"] == \"valor\")\n  |> filter(fn: (r) => r[\"tag\"] == \"10\" or r[\"tag\"] == \"12\")\n  |> aggregateWindow(every: v.windowPeriod, fn: mean, createEmpty: false)\n  |> yield(name: \"mean\")\n*/\n//return msg;\n\n\n",
         "outputs": 1,
         "timeout": 0,
         "noerr": 0,
@@ -14319,7 +13768,7 @@
         "type": "function",
         "z": "8894d7148034cca1",
         "name": "Revisa estado de alarmas",
-        "func": "let tabla = global.get(\"tabla_listadoAlarmasActivas\") || []; \nlet soloReemplazarDatos = true;\n\nlet elementosConCambio = [];\n\nfor (let i of global.get(\"numAlarmasPLC_general\")){\n    var numeroAlarma = i;\n    var nombreAlarma = global.get(\"nombreAlarma\" + numeroAlarma);\n    var estadoAnteriorAlarma = global.get(\"global_alarma_ea\" + numeroAlarma) || \"no\";\n    var estadoAlarma = global.get(\"global_alarma\" + numeroAlarma);\n    var estado_inhibicionAlarma = global.get(\"alarmaInhibida\"  + numeroAlarma);\n    let soloReemplazarDatos_individual = false;\n    \n    if (estadoAlarma != estadoAnteriorAlarma){\n        msg.payload = estadoAlarma + \"  \" + estadoAnteriorAlarma;\n        \n        elementosConCambio.unshift({\n            numeroAlarma: i,\n            estadoAlarma: estadoAlarma\n        });\n        \n        // Buscar si ya existe una alarma con ese ID\n        let index = tabla.findIndex(item => item.id === numeroAlarma);\n        \n        // --- GUARDAR TIMESTAMP en milisegundos (UTC+0) ---\n        let ahora = new Date();\n        let timestamp = ahora.getTime(); // guardar como número\n        // -------------------------------------------------\n\n        if (estadoAlarma == \"activa_noReconocida\" || estadoAlarma == \"inactiva_noReconocida\"){ \n            let color = global.get(\"global_color_alarma\"); \n            if (estadoAlarma == \"inactiva_noReconocida\")\n                color = global.get(\"global_color_inactivaNoReconocida\");\n            let blink = true;\n            let alarmaHtml = `<div class=\"alarm-cell ${color} ${blink ? 'blinking' : ''}\">${nombreAlarma}</div>`;\n    \n            let elemento = {\n                \"id\": numeroAlarma,\n                \"alarma\": alarmaHtml,            \n                \"timestamp\": timestamp  // Guardar timestamp en lugar de fecha formateada\n            };\n            if (index !== -1) {               \n                tabla[index] = elemento;\n                soloReemplazarDatos_individual = true;    \n            }\n            else \n                tabla.unshift(elemento);            \n        }\n        else if (estadoAlarma == \"activa_reconocida\"){\n            let color = global.get(\"global_color_alarma\");\n            let blink = false;        \n            let alarmaHtml = `<div class=\"alarm-cell ${color} ${blink ? 'blinking' : ''}\">${nombreAlarma}</div>`;\n            let elemento = {\n                \"id\": numeroAlarma,\n                \"alarma\": alarmaHtml,            \n                \"timestamp\": timestamp  // Guardar timestamp en lugar de fecha formateada\n            };\n            if (index !== -1){\n                tabla[index] = elemento; \n                soloReemplazarDatos_individual = true;\n            }\n            else\n                tabla.unshift(elemento);              \n        }\n        else if (estadoAlarma == \"inactiva_reconocida\"){\n            if (index !== -1) \n                tabla.splice(index, 1);   \n            soloReemplazarDatos_individual = true;                     \n        }\n        if(!soloReemplazarDatos_individual){\n            soloReemplazarDatos = false;\n        }\n    }   \n}    \n\n// Guardar con timestamps UTC+0\nglobal.set(\"tabla_listadoAlarmasActivas\", tabla); \n\n// --- Convertir timestamps a fechas legibles con zona horaria ---\nlet zona = global.get(\"zonaHoraria\") || -4;\nlet offsetMs = zona * 60 * 60 * 1000;\n\nlet tablaParaMostrar = tabla.map(item => {\n    let itemCopia = {...item};  // copiar para no modificar el original\n    \n    if (item.timestamp) {\n        // Ajustar el timestamp según zona horaria\n        let fechaAjustada = new Date(item.timestamp + offsetMs);\n        \n        // Formatear como fecha legible\n        itemCopia.fecha = fechaAjustada.toLocaleString(\"es-CL\", {\n            timeZone: \"UTC\",  // importante: usar UTC porque ya ajustamos manualmente\n            day: \"2-digit\",\n            month: \"2-digit\",\n            year: \"numeric\",\n            hour: \"2-digit\",\n            minute: \"2-digit\",\n            second: \"2-digit\"\n        });\n        \n        // Eliminar timestamp de lo que se muestra\n        delete itemCopia.timestamp;\n    }\n    \n    return itemCopia;\n});\n// ----------------------------------------------------------------\n\n// Limitar la tabla a solo los primeros 15 elementos\nlet tablaLimitada = tablaParaMostrar.slice(0, 15);\n\nif (soloReemplazarDatos) {\n    msg.payload = {\n        command: \"replaceData\",\n        arguments: [tablaLimitada]\n    };\n}\nelse {\n    msg.payload = [...tablaLimitada];\n}\n\n// Actualizar estados anteriores\nfor (let i of elementosConCambio) {\n    global.set(\"global_alarma_ea\" + i.numeroAlarma, i.estadoAlarma);   \n}\n\nreturn msg;\n\n\n\n/*let tabla = global.get(\"tabla_listadoAlarmasActivas\") || []; \nlet soloReemplazarDatos = true; //cuando no es necesario recontruir y evitamos que la tablase vaya a la posición inicial visualmente\n\nlet elementosConCambio = [];\n\nfor (let i of global.get(\"numAlarmasPLC_general\")){\n    var numeroAlarma = i;\n    var nombreAlarma = global.get(\"nombreAlarma\" + numeroAlarma);\n    var estadoAnteriorAlarma = global.get(\"global_alarma_ea\" + numeroAlarma) || \"no\";\n    var estadoAlarma = global.get(\"global_alarma\" + numeroAlarma);\n    var estado_inhibicionAlarma = global.get(\"alarmaInhibida\"  + numeroAlarma);\n    let soloReemplazarDatos_individual = false;\n    \n    if (estadoAlarma != estadoAnteriorAlarma){\n\n        elementosConCambio.unshift({\n            numeroAlarma: i,\n            estadoAlarma: estadoAlarma\n            });\n        \n        // Buscar si ya existe una alarma con ese ID\n        let index = tabla.findIndex(item => item.id === numeroAlarma);\n        let ahora = new Date();\n        //let fechaLegible = ahora.toLocaleString(\"es-CL\");  // formato local: dd/mm/yyyy hh:mm:ss\n\n        let fechaLegible = ahora.toLocaleString(\"es-CL\", {\n    timeZone: \"UTC\",\n    day: \"2-digit\",\n    month: \"2-digit\",\n    year: \"numeric\",\n    hour: \"2-digit\",\n    minute: \"2-digit\",\n    second: \"2-digit\"\n});\n\n        if (estadoAlarma == \"activa_noReconocida\" || estadoAlarma == \"inactiva_noReconocida\"){ \n            let color = global.get(\"global_color_alarma\"); \n            if (estadoAlarma == \"inactiva_noReconocida\")\n                color = global.get(\"global_color_inactivaNoReconocida\");\n            let blink = true;\n            let alarmaHtml = `<div class=\"alarm-cell ${color} ${blink ? 'blinking' : ''}\">${nombreAlarma}</div>`;\n    \n            let elemento = {\n                \"id\": numeroAlarma,\n                \"alarma\": alarmaHtml,            \n                \"fecha\": fechaLegible\n            }\n            if (index !== -1) {               \n                // Ya existe → reemplazar\n                tabla[index] = elemento;\n                soloReemplazarDatos_individual = true;    \n            }\n            else \n                tabla.unshift(elemento);            \n        }\n        else if (estadoAlarma == \"activa_reconocida\"){\n            let color = global.get(\"global_color_alarma\");\n            let blink = false;        \n            let alarmaHtml = `<div class=\"alarm-cell ${color} ${blink ? 'blinking' : ''}\">${nombreAlarma}</div>`;\n            let elemento = {\n                \"id\": numeroAlarma,\n                \"alarma\": alarmaHtml,            \n                \"fecha\": fechaLegible\n            }\n            if (index !== -1){\n                // Ya existe → reemplazar\n                tabla[index] = elemento; \n                soloReemplazarDatos_individual = true;\n                }\n            else\n                tabla.unshift(elemento);              \n        }\n        else if (estadoAlarma == \"inactiva_reconocida\"){ //se saca de la tabla\n            if (index !== -1) \n                // Ya existe → eliminar            \n                tabla.splice(index, 1);   \n                soloReemplazarDatos_individual = true;                     \n        }\n        if(!soloReemplazarDatos_individual){\n            soloReemplazarDatos = false;\n        }\n    }   \n}    \n\nglobal.set(\"tabla_listadoAlarmasActivas\", tabla); \n\n// ---- NUEVO: limitar la tabla a solo los primeros 15 elementos ----\nlet tablaLimitada = tabla.slice(0, 15);\n// ------------------------------------------------------------------\n\nif (soloReemplazarDatos) {\n    msg.payload = {\n        command: \"replaceData\",\n        arguments: [tablaLimitada]  // limitado a 15\n    };\n}\nelse {\n    msg.payload = [...tablaLimitada];\n}\n\n// Actualizar estados anteriores\nfor (let i of elementosConCambio) {\n    global.set(\"global_alarma_ea\" + i.numeroAlarma, i.estadoAlarma);   \n}\n\nmsg.payload = [...tablaLimitada];\nreturn msg;\n*/\n\n",
+        "func": "let tabla = global.get(\"tabla_listadoAlarmasActivas\") || []; \nlet soloReemplazarDatos = true;\n\nlet elementosConCambio = [];\n\nfor (let i of global.get(\"numAlarmasPLC_general\")){\n    var numeroAlarma = i;\n    var nombreAlarma = global.get(\"nombreAlarma\" + numeroAlarma);\n    var estadoAnteriorAlarma = global.get(\"global_alarma_ea\" + numeroAlarma) || \"no\";\n    var estadoAlarma = global.get(\"global_alarma\" + numeroAlarma);\n    var estado_inhibicionAlarma = global.get(\"alarmaInhibida\"  + numeroAlarma);\n    let soloReemplazarDatos_individual = false;\n    \n    if (estadoAlarma != estadoAnteriorAlarma){\n        msg.payload = estadoAlarma + \"  \" + estadoAnteriorAlarma;\n        \n        elementosConCambio.unshift({\n            numeroAlarma: i,\n            estadoAlarma: estadoAlarma\n        });\n        \n        // Buscar si ya existe una alarma con ese ID\n        let index = tabla.findIndex(item => item.id === numeroAlarma);\n        \n        // --- GUARDAR TIMESTAMP en milisegundos (UTC+0) ---\n        let ahora = new Date();\n        let timestamp = ahora.getTime(); // guardar como número\n        // -------------------------------------------------\n\n        if (estadoAlarma == \"activa_noReconocida\" || estadoAlarma == \"inactiva_noReconocida\"){ \n            let color = global.get(\"global_color_alarma\"); \n            if (estadoAlarma == \"inactiva_noReconocida\")\n                color = global.get(\"global_color_inactivaNoReconocida\");\n            let blink = true;\n            let alarmaHtml = `<div class=\"alarm-cell ${color} ${blink ? 'blinking' : ''}\">${nombreAlarma}</div>`;\n    \n            let elemento = {\n                \"id\": numeroAlarma,\n                \"alarma\": alarmaHtml,            \n                \"timestamp\": timestamp  // Guardar timestamp en lugar de fecha formateada\n            };\n            if (index !== -1) {               \n                tabla[index] = elemento;\n                soloReemplazarDatos_individual = true;    \n            }\n            else \n                tabla.unshift(elemento);            \n        }\n        else if (estadoAlarma == \"activa_reconocida\"){\n            let color = global.get(\"global_color_alarma\");\n            let blink = false;        \n            let alarmaHtml = `<div class=\"alarm-cell ${color} ${blink ? 'blinking' : ''}\">${nombreAlarma}</div>`;\n            let elemento = {\n                \"id\": numeroAlarma,\n                \"alarma\": alarmaHtml,            \n                \"timestamp\": timestamp  // Guardar timestamp en lugar de fecha formateada\n            };\n            if (index !== -1){\n                tabla[index] = elemento; \n                soloReemplazarDatos_individual = true;\n            }\n            else\n                tabla.unshift(elemento);              \n        }\n        else if (estadoAlarma == \"inactiva_reconocida\"){\n            if (index !== -1) \n                tabla.splice(index, 1);   \n            soloReemplazarDatos_individual = true;                     \n        }\n        if(!soloReemplazarDatos_individual){\n            soloReemplazarDatos = false;\n        }\n    }   \n}    \n\n// Guardar con timestamps UTC+0\nglobal.set(\"tabla_listadoAlarmasActivas\", tabla); \n\n// --- Convertir timestamps a fechas legibles con zona horaria ---\nlet zona = global.get(\"zonaHoraria\", \"persist\") || -4;\nlet offsetMs = zona * 60 * 60 * 1000;\n\nlet tablaParaMostrar = tabla.map(item => {\n    let itemCopia = {...item};  // copiar para no modificar el original\n    \n    if (item.timestamp) {\n        // Ajustar el timestamp según zona horaria\n        let fechaAjustada = new Date(item.timestamp + offsetMs);\n        \n        // Formatear como fecha legible\n        itemCopia.fecha = fechaAjustada.toLocaleString(\"es-CL\", {\n            timeZone: \"UTC\",  // importante: usar UTC porque ya ajustamos manualmente\n            day: \"2-digit\",\n            month: \"2-digit\",\n            year: \"numeric\",\n            hour: \"2-digit\",\n            minute: \"2-digit\",\n            second: \"2-digit\"\n        });\n        \n        // Eliminar timestamp de lo que se muestra\n        delete itemCopia.timestamp;\n    }\n    \n    return itemCopia;\n});\n// ----------------------------------------------------------------\n\n// Limitar la tabla a solo los primeros 15 elementos\nlet tablaLimitada = tablaParaMostrar.slice(0, 15);\n\nif (soloReemplazarDatos) {\n    msg.payload = {\n        command: \"replaceData\",\n        arguments: [tablaLimitada]\n    };\n}\nelse {\n    msg.payload = [...tablaLimitada];\n}\n\n// Actualizar estados anteriores\nfor (let i of elementosConCambio) {\n    global.set(\"global_alarma_ea\" + i.numeroAlarma, i.estadoAlarma);   \n}\n\nreturn msg;\n\n\n\n/*let tabla = global.get(\"tabla_listadoAlarmasActivas\") || []; \nlet soloReemplazarDatos = true; //cuando no es necesario recontruir y evitamos que la tablase vaya a la posición inicial visualmente\n\nlet elementosConCambio = [];\n\nfor (let i of global.get(\"numAlarmasPLC_general\")){\n    var numeroAlarma = i;\n    var nombreAlarma = global.get(\"nombreAlarma\" + numeroAlarma);\n    var estadoAnteriorAlarma = global.get(\"global_alarma_ea\" + numeroAlarma) || \"no\";\n    var estadoAlarma = global.get(\"global_alarma\" + numeroAlarma);\n    var estado_inhibicionAlarma = global.get(\"alarmaInhibida\"  + numeroAlarma);\n    let soloReemplazarDatos_individual = false;\n    \n    if (estadoAlarma != estadoAnteriorAlarma){\n\n        elementosConCambio.unshift({\n            numeroAlarma: i,\n            estadoAlarma: estadoAlarma\n            });\n        \n        // Buscar si ya existe una alarma con ese ID\n        let index = tabla.findIndex(item => item.id === numeroAlarma);\n        let ahora = new Date();\n        //let fechaLegible = ahora.toLocaleString(\"es-CL\");  // formato local: dd/mm/yyyy hh:mm:ss\n\n        let fechaLegible = ahora.toLocaleString(\"es-CL\", {\n    timeZone: \"UTC\",\n    day: \"2-digit\",\n    month: \"2-digit\",\n    year: \"numeric\",\n    hour: \"2-digit\",\n    minute: \"2-digit\",\n    second: \"2-digit\"\n});\n\n        if (estadoAlarma == \"activa_noReconocida\" || estadoAlarma == \"inactiva_noReconocida\"){ \n            let color = global.get(\"global_color_alarma\"); \n            if (estadoAlarma == \"inactiva_noReconocida\")\n                color = global.get(\"global_color_inactivaNoReconocida\");\n            let blink = true;\n            let alarmaHtml = `<div class=\"alarm-cell ${color} ${blink ? 'blinking' : ''}\">${nombreAlarma}</div>`;\n    \n            let elemento = {\n                \"id\": numeroAlarma,\n                \"alarma\": alarmaHtml,            \n                \"fecha\": fechaLegible\n            }\n            if (index !== -1) {               \n                // Ya existe → reemplazar\n                tabla[index] = elemento;\n                soloReemplazarDatos_individual = true;    \n            }\n            else \n                tabla.unshift(elemento);            \n        }\n        else if (estadoAlarma == \"activa_reconocida\"){\n            let color = global.get(\"global_color_alarma\");\n            let blink = false;        \n            let alarmaHtml = `<div class=\"alarm-cell ${color} ${blink ? 'blinking' : ''}\">${nombreAlarma}</div>`;\n            let elemento = {\n                \"id\": numeroAlarma,\n                \"alarma\": alarmaHtml,            \n                \"fecha\": fechaLegible\n            }\n            if (index !== -1){\n                // Ya existe → reemplazar\n                tabla[index] = elemento; \n                soloReemplazarDatos_individual = true;\n                }\n            else\n                tabla.unshift(elemento);              \n        }\n        else if (estadoAlarma == \"inactiva_reconocida\"){ //se saca de la tabla\n            if (index !== -1) \n                // Ya existe → eliminar            \n                tabla.splice(index, 1);   \n                soloReemplazarDatos_individual = true;                     \n        }\n        if(!soloReemplazarDatos_individual){\n            soloReemplazarDatos = false;\n        }\n    }   \n}    \n\nglobal.set(\"tabla_listadoAlarmasActivas\", tabla); \n\n// ---- NUEVO: limitar la tabla a solo los primeros 15 elementos ----\nlet tablaLimitada = tabla.slice(0, 15);\n// ------------------------------------------------------------------\n\nif (soloReemplazarDatos) {\n    msg.payload = {\n        command: \"replaceData\",\n        arguments: [tablaLimitada]  // limitado a 15\n    };\n}\nelse {\n    msg.payload = [...tablaLimitada];\n}\n\n// Actualizar estados anteriores\nfor (let i of elementosConCambio) {\n    global.set(\"global_alarma_ea\" + i.numeroAlarma, i.estadoAlarma);   \n}\n\nmsg.payload = [...tablaLimitada];\nreturn msg;\n*/\n\n",
         "outputs": 1,
         "timeout": 0,
         "noerr": 0,
